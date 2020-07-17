@@ -1,0 +1,106 @@
+﻿MERGE EPISODES TRG USING (
+	VALUES
+	(1, 'The Phantom Menace'),
+	(2, 'Attack of the Clones'),
+	(3, 'Revenge of the Sith'),
+	(4, 'A New Hope'),
+	(5, 'The Empire Strikes Back'),
+	(6, 'The Return of the Jedi')
+) SRC([ID], [NAME])
+ON TRG.[ID] = SRC.[ID]
+WHEN MATCHED AND TRG.[ID] != SRC.[ID] THEN
+	UPDATE SET 
+	[ID]=SRC.[ID],
+	[NAME]=SRC.[NAME]
+WHEN NOT MATCHED BY TARGET THEN 
+	INSERT ([ID], [NAME])
+	VALUES (SRC.[ID],SRC.[NAME])
+WHEN NOT MATCHED BY SOURCE THEN 
+	DELETE;
+GO
+SET IDENTITY_INSERT CHARACTERS ON;
+GO
+MERGE CHARACTERS TRG USING (
+	VALUES
+	(1, 'Luke Skywalker'),
+	(2, 'Darth Vader'),
+	(3, 'Han Solo'),
+	(4, 'Leia Organa'),
+	(5, 'Wilhuff Tarkin'),
+	(6, 'C-3PO'),
+	(7, 'R2-D2')
+) SRC([ID], [NAME])
+ON TRG.[ID] = SRC.[ID]
+WHEN MATCHED AND TRG.[ID] != SRC.[ID] THEN
+	UPDATE SET 
+	[NAME]=SRC.[NAME]
+WHEN NOT MATCHED BY TARGET THEN 
+	INSERT ([ID], [NAME])
+	VALUES (SRC.[ID],SRC.[NAME]);
+
+GO
+SET IDENTITY_INSERT CHARACTERS OFF;
+
+GO
+
+MERGE RELATIONSHIPS TRG USING (
+	VALUES
+	(1, 3),
+	(1, 4),
+	(1, 6),
+	(1, 7),
+	(2, 5),
+	(3, 1),
+	(3, 4),
+	(3, 6),
+	(3, 7),
+	(4, 1),
+	(4, 3),
+	(4, 6),
+	(4, 7),
+	(5, 2),
+	(6, 1),
+	(6, 3),
+	(6, 4),
+	(6, 7),
+	(7, 1),
+	(7, 3),
+	(7, 4)
+) SRC([CHARACTERID], [FRIENDID])
+ON TRG.[CHARACTERID] = SRC.[CHARACTERID] AND TRG.[FRIENDID] = SRC.[FRIENDID]
+WHEN NOT MATCHED BY TARGET THEN 
+	INSERT ([CHARACTERID], [FRIENDID])
+	VALUES (SRC.[CHARACTERID],SRC.[FRIENDID])
+WHEN NOT MATCHED BY SOURCE THEN 
+	DELETE;
+
+GO
+
+MERGE CASTS TRG USING (
+	VALUES
+	(1, 4),
+	(1, 5),
+	(1, 6),
+	(2, 4),
+	(2, 5),
+	(2, 6),
+	(3, 4),
+	(3, 5),
+	(3, 6),
+	(4, 4),
+	(4, 5),
+	(4, 6),
+	(5, 4),
+	(6, 4),
+	(6, 5),
+	(6, 6),
+	(7, 4),
+	(7, 5),
+	(7, 6)
+) SRC([CHARACTERID], [EPISODEID])
+ON TRG.[CHARACTERID] = SRC.[CHARACTERID] AND TRG.[EPISODEID] = SRC.[EPISODEID]
+WHEN NOT MATCHED BY TARGET THEN 
+	INSERT ([CHARACTERID], [EPISODEID])
+	VALUES (SRC.[CHARACTERID],SRC.[EPISODEID])
+WHEN NOT MATCHED BY SOURCE THEN 
+	DELETE;
